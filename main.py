@@ -10,6 +10,7 @@
 import sqlite3
 import csv
 import re
+import random
 
 # Connect to the SQLite database
 conn = sqlite3.connect('StudentDB.db')
@@ -36,14 +37,15 @@ cursor.execute('''
 
 # Function to import students from a CSV file
 def import_students_from_csv():
-    filename = input("Enter the path to the CSV file: ")
     try:
-        with open(filename, 'r') as file:
+        with open('./students.csv', 'r') as file:
             reader = csv.DictReader(file)
             for row in reader:
                 faculty_advisor = row.get('FacultyAdvisor')  # Check if FacultyAdvisor exists in the CSV row
                 if faculty_advisor is None:
-                    faculty_advisor = None  # Set to None if not present in CSV
+                    names = ['Dr. Stevens', 'Dr. German', 'Dr. Linstead', 'John', 'Prate']
+                    faculty_advisor = ' '.join([random.choice(names) for i in range(1)])
+
 
                 cursor.execute('''
                     INSERT INTO Students (FirstName, LastName, GPA, Major, FacultyAdvisor, Address, City, State, ZipCode, MobilePhoneNumber, isDeleted)
@@ -67,6 +69,23 @@ def validate_name(name):
         print("Invalid name format. Please enter only alphabetic characters.")
         return False
     return True
+
+# List of valid state abbreviations in the USA
+valid_states = ['AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA', 'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD', 'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ', 'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY']
+# Function to validate a state input
+def validate_state(state):
+    if len(state) != 2:
+        print("Error: State must be a two-letter word.")
+        return False
+    elif not state.isalpha():
+        print("Error: State must contain only letters.")
+        return False
+    elif state.upper() not in valid_states:
+        print("Error: Invalid state abbreviation.")
+        return False
+    else:
+        return True
+
 ## function to validate GPA input
 def validate_gpa(gpa):
     try:
@@ -103,7 +122,9 @@ def add_new_student():
     faculty_advisor = input("Faculty Advisor: ")
     address = input("Address: ")
     city = input("City: ")
-    state = input("State: ")
+    state = input("State (abbreviation): ")
+    while not validate_state(state):
+        state = input("State (abbreviation): ")
     zip_code = input("Zip Code: ")
     while not validate_zip_code(zip_code):
         zip_code = input("Zip Code: ")
@@ -198,7 +219,7 @@ while True:
     print("7. Exit")
 
     choice = input("Enter your choice: ")
-    
+
     if choice == "1":
         import_students_from_csv()
     elif choice == "2":
