@@ -22,7 +22,7 @@ This assignment is to create a Python console application that connects to a SQL
 
 # Referances 
 - Python documentation: https://docs.python.org/3/
-- SQLite documentation: https://www.sqlite.org/docs.html
+- MySQL documentation: https://www.mysql.com/
 - PyCharm documentation: https://www.jetbrains.com/help/pycharm/
 - GitHub documentation: https://docs.github.com/en
 
